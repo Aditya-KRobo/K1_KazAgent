@@ -38,7 +38,10 @@ def main():
 
     res = client.ChangeMode(RobotMode.kCustom)
 
+    # res = client.PlaySound()
+    # res = client.StopSound()
     res = client.Dance(DanceId.kNewYear)
+
     # res = client.Dance(DanceId.kNezha)
     # res = client.Dance(DanceId.kTowardsFuture)
     # res = client.Dance(DanceId.kPogbaGuesture)
