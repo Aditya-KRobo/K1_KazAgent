@@ -8,17 +8,13 @@ from booster_robotics_sdk_python import (
     B1LocoClient,
     ChannelFactory,
     RobotMode,
-    B1HandIndex,
-    GripperControlMode,
     Position,
     Orientation,
     Posture,
-    GripperMotionParameter,
     GetModeResponse,
     Quaternion,
     Frame,
     Transform,
-    DexterousFingerParameter,
 )
 import sys, time, random
 
@@ -40,18 +36,18 @@ def main():
     res = client.EnterWBCGait()
 
     # Find the gamepad device file (e.g., /dev/input/eventX)
-    gamepad = InputDevice("/dev/input/event0")
+    gamepad = InputDevice("/dev/input/js0")
     print(gamepad)
 
     for event in gamepad.read_loop():
         if event.type == ecodes.EV_KEY:
             print(categorize(event))  # Button presses
-            res = client.PlaySound("")
-            # res = client.Dance(DanceId.kNewYear)
+            # res = client.PlaySound("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3")
+            res = client.Dance(DanceId.kNewYear)
         elif event.type == ecodes.EV_ABS:
             print(categorize(event))  # Stick movements
-            res = client.StopSound()
-            # res = client.Dance(DanceId.kUltramanGuesture)
+            # res = client.StopSound()
+            res = client.Dance(DanceId.kUltramanGuesture)
 
     # while True:
     # events = get_gamepad()

@@ -87,12 +87,19 @@ def main():
         print(f"Usage: {sys.argv[0]} networkInterface")
         sys.exit(-1)
 
-    ChannelFactory.Instance().Init(0, sys.argv[1])
+    net_if = sys.argv[1]
+    robot_name = sys.argv[2] if len(sys.argv) >= 3 else None
+
+    # Initialize DDS
+    ChannelFactory.Instance().Init(0, net_if)
 
     client = B1LocoClient()
-    client.Init()
-    res = 0
+    if robot_name:
+        client.InitWithName(robot_name)
+    else:
+        client.Init()
 
+    res = 0
     res = client.ChangeMode(RobotMode.kCustom)
 
     channel_subscriber = B1RemoteControllerSubscriber(handler)

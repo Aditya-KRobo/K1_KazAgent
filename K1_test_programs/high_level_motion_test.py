@@ -2,17 +2,20 @@ from booster_robotics_sdk_python import (
     B1LocoClient,
     ChannelFactory,
     RobotMode,
-    B1HandIndex,
-    GripperControlMode,
+    DanceId,
+    WholeBodyDanceId,
+    HandAction,
+    kHandOpen,
+    kHandClose,
+    WaveHand,
+    Handshake,
     Position,
     Orientation,
     Posture,
-    GripperMotionParameter,
     GetModeResponse,
     Quaternion,
     Frame,
     Transform,
-    DexterousFingerParameter,
 )
 import sys, time, random
 
@@ -22,16 +25,24 @@ def main():
         print(f"Usage: {sys.argv[0]} networkInterface")
         sys.exit(-1)
 
-    ChannelFactory.Instance().Init(0, sys.argv[1])
+    net_if = sys.argv[1]
+    robot_name = sys.argv[2] if len(sys.argv) >= 3 else None
+
+    ChannelFactory.Instance().Init(0, net_if)
 
     client = B1LocoClient()
-    client.Init()
+    if robot_name:
+        client.InitWithName(robot_name)
+    else:
+        client.Init()
+
     x, y, z, yaw, pitch = 0.0, 0.0, 0.0, 0.0, 0.0
     res = 0
     hand_action_count = 0
 
     while True:
-        input_cmd = input(
+        try:
+            raw = input(
             "Here is the command list:\
                           \n1. Enter damp mode -> md\
                           \n2. Enter prep mode -> mp\
@@ -42,21 +53,37 @@ def main():
                           \n7. Dance NewYear -> d0\
                           \n8. WB Dance Moonwalk -> wbd4\
                           \n....."
-        )
+        ).strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExit.")
+            break
 
-        if input_cmd == "mp":
+        if not raw:
+            continue
+
+        parts = raw.split()
+        cmd = parts[0]
+        args = parts[1:]
+
+        need_print = False
+
+
+        if cmd == "mp":
             res = client.ChangeMode(RobotMode.kPrepare)
-        elif input_cmd == "md":
+        elif cmd == "md":
             res = client.ChangeMode(RobotMode.kDamping)
-        elif input_cmd == "mw":
+        elif cmd == "mw":
             res = client.ChangeMode(RobotMode.kWalking)
-        elif input_cmd == "mc":
+        elif cmd == "mc":
             res = client.ChangeMode(RobotMode.kCustom)
-        elif input_cmd == "hsko":
+        elif cmd == "hsko":
+            res = client.ChangeMode(RobotMode.kWalking)
             res = client.Handshake(kHandOpen)
-        elif input_cmd == "d0":
+        elif cmd == "d0":
+            res = client.ChangeMode(RobotMode.kWalking)
             res = client.Dance(DanceId.kNewYear)
-        elif input_cmd == "wbd4":
+        elif cmd == "wbd4":
+            res = client.ChangeMode(RobotMode.kWalking)
             res = client.WholeBodyDance(WholeBodyDanceId.kMoonWalk)
 
         if res != 0:

@@ -1,23 +1,14 @@
 from booster_robotics_sdk_python import (
     B1LocoClient,
-    AiClient,
     ChannelFactory,
-    StartAiChatParameter,
-    TtsConfig,
-    LlmConfig,
-    AsrConfig,
     RobotMode,
-    B1HandIndex,
-    GripperControlMode,
     Position,
     Orientation,
     Posture,
-    GripperMotionParameter,
     GetModeResponse,
     Quaternion,
     Frame,
     Transform,
-    DexterousFingerParameter,
 )
 import sys, time, random
 

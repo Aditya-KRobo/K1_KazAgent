@@ -6,18 +6,15 @@ from booster_robotics_sdk_python import (
     TtsConfig,
     LlmConfig,
     AsrConfig,
+    SpeakParameter,
     RobotMode,
-    B1HandIndex,
-    GripperControlMode,
     Position,
     Orientation,
     Posture,
-    GripperMotionParameter,
     GetModeResponse,
     Quaternion,
     Frame,
     Transform,
-    DexterousFingerParameter,
 )
 import sys, time, random
 
@@ -62,36 +59,59 @@ def main():
         print(f"Usage: {sys.argv[0]} networkInterface")
         sys.exit(-1)
 
-    ChannelFactory.Instance().Init(0, sys.argv[1])
+    net_if = sys.argv[1]
+    robot_name = sys.argv[2] if len(sys.argv) > 2 else None
+
+    ChannelFactory.Instance().Init(0, net_if)
 
     client = AiClient()
     client.Init()
 
     print("AI CLI started.")
-    client.Init()
-    x, y, z, yaw, pitch = 0.0, 0.0, 0.0, 0.0, 0.0
     res = 0
-    hand_action_count = 0
 
     while True:
-        input_cmd = input(
+        try:
+            input_cmd = input(
             "Here is the command list:\
                           \n1. Start face tracking -> ft\
                           \n2. Stop face tracking -> sft\
                           \n3. Stop Ai Chat -> stp\
                           \n....."
-        )
+            ).strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExit.")
+            break
 
-        if input_cmd == "ft":
+        if not input_cmd:
+            continue
+        
+        parts = input_cmd.split(maxsplit=1)
+        cmd = parts[0]
+        arg = parts[1] if len(parts) > 1 else ""
+
+        param = build_default_start_param(enable_face_tracking=True)
+        client.StartAiChat(param)
+        print("[OK] StartAiChat (face_tracking = True) sent.")
+
+        if cmd == "ft":
             param = build_default_start_param(enable_face_tracking=True)
             res = client.StartAiChat(param)
             print("[OK] StartAiChat (face_tracking = True) sent.")
-        elif input_cmd == "sft":
+        elif cmd == "sft":
             param = build_default_start_param(enable_face_tracking=False)
             res = client.StartAiChat(param)
             print("[OK] StartAiChat (face_tracking = False) sent.")
-        elif input_cmd == "stp":
+        elif cmd == "stp":
             res = client.StopAiChat()
+            print("[OK] StopAiChat sent.")
+        elif cmd == "speak":
+                if not arg:
+                    print("Usage: speak <text>")
+                    continue
+                sp = SpeakParameter(arg)
+                client.Speak(sp)
+                print(f"[OK] Speak sent: {arg}")
 
         if res != 0:
             print(f"Request failed: error = {res}")

@@ -1,6 +1,6 @@
 from booster_robotics_sdk_python import (
     ChannelFactory,
-    B1RemoteControllerStateSubscriber,
+    B1RemoteControllerSubscriber,
 )
 import time
 

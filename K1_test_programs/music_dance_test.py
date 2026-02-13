@@ -4,17 +4,15 @@ from booster_robotics_sdk_python import (
     B1LocoClient,
     ChannelFactory,
     RobotMode,
-    B1HandIndex,
-    GripperControlMode,
+    PlaySound,
+    StopSound,
     Position,
     Orientation,
     Posture,
-    GripperMotionParameter,
     GetModeResponse,
     Quaternion,
     Frame,
     Transform,
-    DexterousFingerParameter,
 )
 import sys, time, random
 
@@ -36,11 +34,12 @@ def main():
     client.Init()
     res = 0
 
-    res = client.ChangeMode(RobotMode.kCustom)
+    res = client.ChangeMode(RobotMode.kWalking)
 
     # res = client.PlaySound()
     # res = client.StopSound()
     res = client.Dance(DanceId.kNewYear)
+    # res = client.PlaySound("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3")
 
     # res = client.Dance(DanceId.kNezha)
     # res = client.Dance(DanceId.kTowardsFuture)
@@ -60,6 +59,8 @@ def main():
     # res = client.WholeBodyDance(WholeBodyDanceId.kRoundhouseKick)
 
     # mixer.music.play()
+    
+    # client.StopSound()
 
     if res != 0:
         print(f"Request failed: error = {res}")
