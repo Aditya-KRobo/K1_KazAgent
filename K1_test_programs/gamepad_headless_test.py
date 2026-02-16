@@ -1,6 +1,6 @@
 from evdev import InputDevice, categorize, ecodes
 
-# from inputs import get_gamepad
+from inputs import get_gamepad
 
 from booster_robotics_sdk_python import (
     DanceId,
@@ -31,28 +31,30 @@ def main():
     client.Init()
     res = 0
 
-    res = client.ChangeMode(RobotMode.kCustom)
+    # res = client.ChangeMode(RobotMode.kCustom)
     # res = client.GetUpWithMode(RobotMode.kWalking)
-    res = client.EnterWBCGait()
+    # res = client.EnterWBCGait()
 
-    # Find the gamepad device file (e.g., /dev/input/eventX)
-    gamepad = InputDevice("/dev/input/js0")
-    print(gamepad)
+    # # Find the gamepad device file (e.g., /dev/input/eventX)
+    # gamepad = InputDevice("/dev/input/js0")
+    # print(gamepad)
 
-    for event in gamepad.read_loop():
-        if event.type == ecodes.EV_KEY:
-            print(categorize(event))  # Button presses
-            # res = client.PlaySound("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3")
-            res = client.Dance(DanceId.kNewYear)
-        elif event.type == ecodes.EV_ABS:
-            print(categorize(event))  # Stick movements
-            # res = client.StopSound()
-            res = client.Dance(DanceId.kUltramanGuesture)
+    # for event in gamepad.read_loop():
+    #     if event.type == ecodes.EV_KEY:
+    #         print(categorize(event))  # Button presses
+    #         # res = client.PlaySound("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3")
+    #         # res = client.Dance(DanceId.kNewYear)
+    #     elif event.type == ecodes.EV_ABS:
+    #         print(categorize(event))  # Stick movements
+    #         # res = client.StopSound()
+    #         # res = client.Dance(DanceId.kUltramanGuesture)
 
-    # while True:
-    # events = get_gamepad()
-    # for event in events:
-    #     print(event.ev_type, event.code, event.state)
+    while True:
+        events = get_gamepad()
+        for event in events:
+            print(f'{event.ev_type} | {event.code} | {event.state}')
+            
+        print("--------------")
 
     if res != 0:
         print(f"Request failed: error = {res}")
