@@ -17,6 +17,8 @@ But_HOME = "BTN_MODE"
 
 Button_values = {"BTN_EAST": 0, "BTN_C": 0, "BTN_SOUTH": 0, "BTN_NORTH": 0, "BTN_WEST": 0, "BTN_Z": 0, "ABS_RX": 0, "ABS_RY": 0, "BTN_TL2": 0, "BTN_TR2": 0, "ABS_HAT0X": 0, "ABS_HAT0Y": 0, "BTN_START": 0, "BTN_SELECT": 0, "BTN_THUMBL": 0, "BTN_MODE": 15}
 
+Agent_flag = 0
+
 # from evdev import InputDevice, categorize, ecodes
 
 from inputs import get_gamepad
@@ -51,7 +53,7 @@ def main():
     res = 0
 
     # res = client.ChangeMode(RobotMode.kCustom)
-    # # res = client.GetUpWithMode(RobotMode.kWalking)
+    # res = client.GetUpWithMode(RobotMode.kWalking)
     # res = client.EnterWBCGait()
 
     while True:
@@ -59,12 +61,34 @@ def main():
         for event in events:
             # pass
             print(f'{event.ev_type} | {event.code} | {event.state}')
-        if event.code == But_LB and event.state == 1:
+            Button_values[event.code] = event.state
+
+        if Button_values[But_START] == 1 and Button_values[But_SELECT] == 1 and Agent_flag == 0:
+            print("KazAgent Enabled!")
+            Agent_flag = 1
+            # Swtich to custom mode
+
+
+        elif Button_values[But_START] == 1 and Button_values[But_SELECT] == 0 and Agent_flag == 1:
+            print("KazAgent Disabled!")
+            Agent_flag = 0
+            # Switch out of custom mode
+
+
+        if Button_values[But_LB] == 1 and  Agent_flag == 1:
             print("Requested Sit-down")
-        elif event.code == But_RB and event.state == 1:
+            # Execute sit-down behavior
+
+        elif Button_values[But_RB] == 1 and Agent_flag == 1:
             print("Requested Stand-up")
-        elif event.code == But_Min and event.state == 1 :
-            print("Requested Dance")
+            # Execute stand-up behavior
+
+        elif Button_values[But_Min] == 1 and Agent_flag == 1:
+            print("Requested Music-Dance")
+            # Execute music-dance behavior
+
+        
+        
 
     if res != 0:
         print(f"Request failed: error = {res}")
