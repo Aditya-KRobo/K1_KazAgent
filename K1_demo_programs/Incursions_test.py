@@ -33,7 +33,6 @@ But_SELECT = "BTN_SELECT"
 But_O = "BTN_THUMBL"
 But_HOME = "BTN_MODE"
 
-audio_flag = 0
 Button_values = {"BTN_EAST": 0, "BTN_C": 0, "BTN_SOUTH": 0, "BTN_NORTH": 0, "BTN_WEST": 0, "BTN_Z": 0, "ABS_RX": 0, "ABS_RY": 0, "BTN_TL2": 0, "BTN_TR2": 0, "ABS_HAT0X": 0, "ABS_HAT0Y": 0, "BTN_START": 0, "BTN_SELECT": 0, "BTN_THUMBL": 0, "BTN_MODE": 0}
 
 def main():
@@ -50,8 +49,9 @@ def main():
 
     # res = client.ChangeMode(RobotMode.kCustom)
 
+    audio_lock = False
+    audio_flag = 0
     pygame.init()
-
 
     while True:
 
@@ -61,37 +61,41 @@ def main():
             print(f'{event.ev_type} | {event.code} | {event.state}')
             Button_values[event.code] = event.state
 
-        if Button_values[But_Min] == 1:
-            Button_values[But_Min] = 0
-            try:
-                if audio_flag == 0:
-                    pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/1.mp3")
-                    audio_flag = 1
-                elif audio_flag == 1:
-                    pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/2.mp3")
-                    audio_flag = 2
-                elif audio_flag == 2:
-                    pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/3.mp3")
-                    audio_flag = 0
+            if Button_values[But_Min] == 0 and audio_lock:
+                audio_lock = False
+            if Button_values[But_Min] == 1 and not audio_lock:
+                # print("Button Min is pressed, starting music playback...")
+                audio_lock = True
+                Button_values[But_Min] = 0
+                try:
+                    if audio_flag == 0:
+                        pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/1.mp3")
+                        audio_flag = 1
+                    elif audio_flag == 1:
+                        pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/2.mp3")
+                        audio_flag = 2
+                    elif audio_flag == 2:
+                        pygame.mixer.music.load("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/3.mp3")
+                        audio_flag = 0
 
-            except pygame.error as e:
-                print(f"Could not load music file: {e}")
-                # Handle the error, maybe exit the program or use a placeholder
-                exit()
+                except pygame.error as e:
+                    print(f"Could not load music file: {e}")
+                    # Handle the error, maybe exit the program or use a placeholder
+                    exit()
 
-            pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.set_volume(0.7)
 
-            try:
-                pygame.mixer.music.play(-1)
-                print("Music started playing...")
-                while pygame.mixer.music.get_busy():
-                    time.sleep(1) 
-                    if res != 0:
-                        print(f"Request failed: error = {res}")
-            except KeyboardInterrupt:
-                print("Music playback interrupted by user.")
-            finally:
-                pygame.quit()
+                try:
+                    pygame.mixer.music.play()
+                    print("Music started playing...")
+                    while pygame.mixer.music.get_busy():
+                        time.sleep(1) 
+                        if res != 0:
+                            print(f"Request failed: error = {res}")
+                except KeyboardInterrupt:
+                    print("Music playback interrupted by user.")
+                # finally:
+                #     pygame.quit()
 
 
 if __name__ == "__main__":
