@@ -1,17 +1,3 @@
-from booster_robotics_sdk_python import (
-    DanceId,
-    WholeBodyDanceId,
-    B1LocoClient,
-    ChannelFactory,
-    RobotMode,
-    Position,
-    Orientation,
-    Posture,
-    GetModeResponse,
-    Quaternion,
-    Frame,
-    Transform,
-)
 import sys, time, random
 import pygame
 from inputs import get_gamepad
@@ -51,18 +37,6 @@ Audio_files = ["/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res
             "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/14.mp3"]
 
 def main():
-
-    if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} networkInterface")
-        sys.exit(-1)
-
-    ChannelFactory.Instance().Init(0, sys.argv[1])
-
-    client = B1LocoClient()
-    client.Init()
-    res = 0
-
-    # res = client.ChangeMode(RobotMode.kCustom)
 
     audio_lock = False
     audio_flag = 0
