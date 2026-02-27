@@ -54,7 +54,19 @@ def main():
             #     audio_lock = False
             if Button_values[But_Plu] == 1 and not audio_lock:
                 pygame.mixer.music.load(Audio_files[audio_flag])
-            
+                audio_lock = True
+
+                pygame.mixer.music.set_volume(1.0)
+
+                try:
+                    pygame.mixer.music.play()
+                    print("Music started playing...")
+                    while pygame.mixer.music.get_busy():
+                        time.sleep(1) 
+                    audio_lock = False
+                except KeyboardInterrupt:
+                    print("Music playback interrupted by user.")
+
             # if Button_values[But_Min] == 0 and audio_lock:
             #     audio_lock = False
             if Button_values[But_Min] == 1 and not audio_lock:
@@ -80,8 +92,6 @@ def main():
                     print("Music started playing...")
                     while pygame.mixer.music.get_busy():
                         time.sleep(1) 
-                        if res != 0:
-                            print(f"Request failed: error = {res}")
                     audio_lock = False
                 except KeyboardInterrupt:
                     print("Music playback interrupted by user.")
