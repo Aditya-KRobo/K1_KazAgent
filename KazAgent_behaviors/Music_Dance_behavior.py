@@ -59,7 +59,7 @@ def main():
             Button_values[event.code] = event.state
 
             #Command to start music and dance combo
-            if Button_values[But_Plu] == 1:
+            if Button_values[But_Min] == 1:
                 
                 #Play the music first
                 pygame.init()
@@ -86,7 +86,7 @@ def main():
                 #Start with setting the robot to stand mode(LT+Start), then switch to dance agent(LT+RT+Y), then switch to walk mode(RT+A)
                 #Then give it the dance command from the preprogrammed dance options(LB+Y),(LB+Dpad_Up).
 
-    # res = client.ChangeMode(RobotMode.kWalking)
+                res = client.ChangeMode(RobotMode.kPrepare)
 
     # res = client.PlaySound()
     # res = client.StopSound()
