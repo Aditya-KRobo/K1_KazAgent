@@ -36,6 +36,7 @@ But_HOME = "BTN_MODE"
 
 Button_values = {"BTN_EAST": 0, "BTN_C": 0, "BTN_SOUTH": 0, "BTN_NORTH": 0, "BTN_WEST": 0, "BTN_Z": 0, "ABS_RX": 0, "ABS_RY": 0, "BTN_TL2": 0, "BTN_TR2": 0, "ABS_HAT0X": 0, "ABS_HAT0Y": 0, "BTN_START": 0, "BTN_SELECT": 0, "BTN_THUMBL": 0, "BTN_MODE": 0}
 
+
 def main():
 
     if len(sys.argv) < 2:
@@ -48,6 +49,8 @@ def main():
     client.Init()
     res = 0
 
+    pad_lock = False
+
     pygame.init()
 
     while True:
@@ -57,9 +60,17 @@ def main():
         for event in events:
             # print(f'{event.ev_type} | {event.code} | {event.state}')
             Button_values[event.code] = event.state
+            
+            #Command to stop music and dance combo
+            if Button_values[But_Min] == 1 and pad_lock:
+                pad_lock = False
+                pygame.mixer.music.stop()
+                res = client.ChangeMode(RobotMode.kPrepare)
+                print("Music stopped and robot set to prepare mode.")
 
             #Command to start music and dance combo
-            if Button_values[But_Min] == 1:
+            if Button_values[But_Plu] == 1 and not pad_lock:
+                pad_lock = True
                 
                 #Play the music first
                 pygame.init()
@@ -74,19 +85,22 @@ def main():
                 pygame.mixer.music.set_volume(0.7)
 
                 try:
+                    res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance2)
                     pygame.mixer.music.play()
                     print("Music started playing...")
                     while pygame.mixer.music.get_busy():
                         time.sleep(1) 
                 except KeyboardInterrupt:
                     print("Music playback interrupted by user.")
+                    pygame.mixer.music.stop()
+                    res = client.ChangeMode(RobotMode.kPrepare)
     
 
                 #Then start the dance
                 #Start with setting the robot to stand mode(LT+Start), then switch to dance agent(LT+RT+Y), then switch to walk mode(RT+A)
                 #Then give it the dance command from the preprogrammed dance options(LB+Y),(LB+Dpad_Up).
-
-                res = client.ChangeMode(RobotMode.kPrepare)
+                
+    # res = client.ChangeMode(RobotMode.kWalking)
 
     # res = client.PlaySound()
     # res = client.StopSound()
