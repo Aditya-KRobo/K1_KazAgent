@@ -64,28 +64,27 @@ def main():
             #Command to stop music and dance combo
             if Button_values[But_Min] == 1 and pad_lock:
                 pad_lock = False
-                pygame.mixer.music.stop()
-                res = client.ChangeMode(RobotMode.kPrepare)
-                print("Music stopped and robot set to prepare mode.")
+                # pygame.mixer.music.stop()
+                # res = client.ChangeMode(RobotMode.kPrepare)
+                # print("Music stopped and robot set to prepare mode.")
 
             #Command to start music and dance combo
             if Button_values[But_Plu] == 1 and not pad_lock:
                 pad_lock = True
                 
                 #Play the music first
-                pygame.init()
                 try:
-                    pygame.mixer.music.load('/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3')
+                    pygame.mixer.music.load('/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Lion Dance.mp3')
 
                 except pygame.error as e:
                     print(f"Could not load music file: {e}")
                     # Handle the error, maybe exit the program or use a placeholder
                     exit()
 
-                pygame.mixer.music.set_volume(0.7)
+                pygame.mixer.music.set_volume(1.0)
 
                 try:
-                    res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance2)
+                    # res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance2)
                     pygame.mixer.music.play()
                     print("Music started playing...")
                     while pygame.mixer.music.get_busy():
@@ -93,43 +92,8 @@ def main():
                 except KeyboardInterrupt:
                     print("Music playback interrupted by user.")
                     pygame.mixer.music.stop()
-                    res = client.ChangeMode(RobotMode.kPrepare)
+                    # res = client.ChangeMode(RobotMode.kPrepare)
     
-
-                #Then start the dance
-                #Start with setting the robot to stand mode(LT+Start), then switch to dance agent(LT+RT+Y), then switch to walk mode(RT+A)
-                #Then give it the dance command from the preprogrammed dance options(LB+Y),(LB+Dpad_Up).
-                
-    # res = client.ChangeMode(RobotMode.kWalking)
-
-    # res = client.PlaySound()
-    # res = client.StopSound()
-    # res = client.Dance(DanceId.kNewYear)
-    # res = client.PlaySound("/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/Michael Jackson - Billie Jean(2).mp3")
-
-    # res = client.Dance(DanceId.kNezha)
-    # res = client.Dance(DanceId.kTowardsFuture)
-    # res = client.Dance(DanceId.kPogbaGuesture)
-    # res = client.Dance(DanceId.kUltramanGuesture)
-    # res = client.Dance(DanceId.kChineseGreetingGuesture)
-    # res = client.Dance(DanceId.kCheeringGuesture)
-    # res = client.Dance(DanceId.kManekiGuesture)
-    # res = client.Dance(DanceId.kStop)
-
-    # res = client.WholeBodyDance(WholeBodyDanceId.kArbicDance)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance1)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance2)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kMichaelDance3)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kMoonWalk)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kBoxingStyleKick)
-    # res = client.WholeBodyDance(WholeBodyDanceId.kRoundhouseKick)
-
-    # mixer.music.play()
-    
-    # client.StopSound()
-
-    # if res != 0:
-    #     print(f"Request failed: error = {res}")
 
 
 if __name__ == "__main__":

@@ -32,9 +32,7 @@ Audio_files = ["/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res
             "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/09.mp3",
             "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/10.mp3",
             "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/11.mp3",
-            "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/12.mp3",
-            "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/13.mp3",
-            "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/14.mp3"]
+            "/home/booster/Workspace/K1_Custom_Behaviors/K1_test_programs/res/12.mp3",]
 
 def main():
 
@@ -50,11 +48,16 @@ def main():
             # print(f'{event.ev_type} | {event.code} | {event.state}')
             Button_values[event.code] = event.state
 
-            # if Button_values[But_Plu] == 0 and audio_lock:
-            #     audio_lock = False
-            if Button_values[But_Plu] == 1 and not audio_lock:
+            #Locking audio play to prevent multiple plays
+            if Button_values[But_Plu] == 0 and audio_lock:
+                audio_lock = False
+            
+            #Action for repeating last played audio
+            elif Button_values[But_Plu] == 1 and not audio_lock:
                 pygame.mixer.music.load(Audio_files[audio_flag])
+                print("Repeating audio...")
                 audio_lock = True
+                Button_values[But_Plu] = 0
 
                 pygame.mixer.music.set_volume(1.0)
 
@@ -67,17 +70,20 @@ def main():
                 except KeyboardInterrupt:
                     print("Music playback interrupted by user.")
 
-            # if Button_values[But_Min] == 0 and audio_lock:
-            #     audio_lock = False
-            if Button_values[But_Min] == 1 and not audio_lock:
+            #Locking audio play to prevent multiple plays
+            elif Button_values[But_Min] == 0 and audio_lock:
+                audio_lock = False
+
+            #Action for playing next audio in the list
+            elif Button_values[But_Min] == 1 and not audio_lock:
                 # print("Button Min is pressed, starting music playback...")
                 audio_lock = True
                 Button_values[But_Min] = 0
                 try:
-                    if audio_flag < 14:
+                    if audio_flag < len(Audio_files):
                         pygame.mixer.music.load(Audio_files[audio_flag])
                         audio_flag += 1
-                    elif audio_flag == 14:
+                    elif audio_flag == len(Audio_files):
                         audio_flag = 0
 
                 except pygame.error as e:
