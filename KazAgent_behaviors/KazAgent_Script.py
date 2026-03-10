@@ -4,8 +4,8 @@ But_X = "BTN_SOUTH"
 But_Y = "BTN_NORTH"
 But_LB = "BTN_WEST"
 But_RB = "BTN_Z"
-But_LT = "ABS_RX"
-But_RT = "ABS_RY"
+But_LT = "BTN_TL"
+But_RT = "BTN_TR"
 But_Min = "BTN_TL2"
 But_Plu = "BTN_TR2"
 D_X = "ABS_HAT0X"
@@ -15,12 +15,13 @@ But_SELECT = "BTN_SELECT"
 But_O = "BTN_THUMBL"
 But_HOME = "BTN_MODE"
 
-Button_values = {"BTN_EAST": 0, "BTN_C": 0, "BTN_SOUTH": 0, "BTN_NORTH": 0, "BTN_WEST": 0, "BTN_Z": 0, "ABS_RX": 0, "ABS_RY": 0, "BTN_TL2": 0, "BTN_TR2": 0, "ABS_HAT0X": 0, "ABS_HAT0Y": 0, "BTN_START": 0, "BTN_SELECT": 0, "BTN_THUMBL": 0, "BTN_MODE": 0}
+Button_values = {"BTN_EAST": 0, "BTN_C": 0, "BTN_SOUTH": 0, "BTN_NORTH": 0, "BTN_WEST": 0, "BTN_Z": 0, "BTN_TL": 0, "BTN_TR": 0, "BTN_TL2": 0, "BTN_TR2": 0, "ABS_HAT0X": 0, "ABS_HAT0Y": 0, "BTN_START": 0, "BTN_SELECT": 0, "BTN_THUMBL": 0, "BTN_MODE": 0}
 
-Agent_flag = 0
-Busy_flag = 0
-Stand_flag = 0
-Sit_flag = 0
+global Agent_flag
+global Busy_flag
+global Stand_flag
+global Sit_flag
+
 
 # from evdev import InputDevice, categorize, ecodes
 
@@ -58,6 +59,11 @@ def main():
     client.Init()
     res = 0
 
+    Agent_flag = 0
+    Busy_flag = 0
+    Sit_flag = 0
+    Stand_flag = 0
+
     time.sleep(5)
     # res = client.ChangeMode(RobotMode.kCustom)
     # res = client.GetUpWithMode(RobotMode.kWalking)
@@ -67,29 +73,29 @@ def main():
         events = get_gamepad()
         for event in events:
             # pass
-            print(f'{event.ev_type} | {event.code} | {event.state}')
+            # print(f'{event.ev_type} | {event.code} | {event.state}')
             Button_values[event.code] = event.state
 
         # Enable KazAgent v1
-        if Button_values[But_START] == 1 and Button_values[But_SELECT] == 1 and Agent_flag == 0:
+        if Button_values[But_LT] == 1 and Button_values[But_LB] == 1 and Agent_flag == 0:
             print("KazAgent Enabled!")
             Busy_flag = 0
             Agent_flag = 1
             Stand_flag = 1
             # Switch to Walk mode
-            res = client.ChangeMode(RobotMode.kWalking)
+            # res = client.ChangeMode(RobotMode.kWalking)
 
         #Disable KazAgent v1
-        elif Button_values[But_START] == 1 and Button_values[But_SELECT] == 0 and Agent_flag == 1:
+        elif Button_values[But_RT] == 1 and Button_values[But_RB] == 1 and Agent_flag == 1:
             print("KazAgent Disabled!")
             Busy_flag = 0
             Agent_flag = 0
             Stand_flag = 1
             # Switch to Walk mode
-            res = client.ChangeMode(RobotMode.kDamping)
+            # res = client.ChangeMode(RobotMode.kDamping)
 
         # Trigger Sitdown behavior, if robot is standing and idle
-        if Button_values[But_LB] == 1 and Agent_flag == 1 and Stand_flag == 1 and Busy_flag == 0:
+        if Button_values[But_LT] == 1 and Button_values[But_Min] == 1 and Agent_flag == 1 and Stand_flag == 1 and Busy_flag == 0:
             print("Requested Sit-down")
             #Lock the robot process
             Busy_flag = 1
@@ -98,7 +104,8 @@ def main():
             Busy_flag = 0
             Stand_flag = 0
 
-        elif Button_values[But_RB] == 1 and Agent_flag == 1 and Sit_flag == 1 and Busy_flag == 0:
+        #Trigger Stand-up behavior, if robot is sitting and idle
+        elif Button_values[But_LT] == 1 and Button_values[But_Plu] == 1 and Agent_flag == 1 and Sit_flag == 1 and Busy_flag == 0:
             print("Requested Stand-up")
             Busy_flag = 1
             Stand_flag = 1
@@ -106,18 +113,22 @@ def main():
             Busy_flag = 0
             Sit_flag = 0
 
-        elif Button_values[But_Min] == 1 and Agent_flag == 1 and Busy_flag == 0:
+        #Trigger Music-Dance behavior, if robot is idle
+        elif Button_values[But_LB] == 1 and Button_values[But_Min] == 1 and Agent_flag == 1 and Busy_flag == 0:
             print("Requested Music-Dance")
             Busy_flag = 1
             # Execute music-dance behavior
-            MDB.Music_Dance_behavior(client)
-            Busy_flag = 0
+            # MDB.Music_Dance_behavior(client)
 
-        elif Button_values[But_Plu] == 1 and Agent_flag == 1 and Busy_flag == 0:
+        #Trigger Dialogue behavior, if robot is idle
+        elif Button_values[But_LB] == 1 and Button_values[But_Plu] == 1 and Agent_flag == 1 and Busy_flag == 0:
             print("Requested Dialogue")
             Busy_flag = 1
             # Execute dialogue behavior
-            DB.Dialogue_behavior()
+            # DB.Dialogue_behavior()
+
+        elif Button_values[But_O] == 1 and Agent_flag == 1 and Busy_flag == 1:
+            print("Requested Robot to be put to Idle mode")
             Busy_flag = 0
 
 
